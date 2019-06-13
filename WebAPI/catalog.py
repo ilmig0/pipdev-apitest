@@ -12,6 +12,7 @@ class Catalog:
         self.__sections = dict()
         self.__locations = dict()
         self.__equipments = dict()
+        self.__equipment_types = dict()
         self.__orepass = dict()
         self.__operators = dict()
         self.__job_kinds = dict()
@@ -37,6 +38,10 @@ class Catalog:
     def __update_locations(self):
         location_list = self.__api.get_location(self.__date, self.__mine)
         self.__locations.update(Catalog.dict_by_key('idLocation', location_list))
+
+    def __update_equipment_types(self):
+        equipment_types_list = self.__api.get_equipment_type(self.__date)
+        self.__equipment_types.update(Catalog.dict_by_key('idEquipmentType', equipment_types_list))
 
     def __update_equipment(self):
         equipment_list = self.__api.get_equipment(self.__date, self.__mine)
@@ -70,20 +75,56 @@ class Catalog:
         self.__update_sections()
         self.__update_orepass()
         self.__update_locations()
+        self.__update_equipment_types()
         self.__update_equipment()
         self.__update_operators()
         self.__update_job_kind()
         self.__update_unit()
 
     def print_workorders(self):
+
+        print('{0:2s} | {1:2s} | {2:40s} | {3:30s} | {4:40s} | {5:20s} | {6:25s} | {7:40s} | {8:5s}\t | \t{9:10s} | {10}\n'
+            .format(
+                'Ш.',
+                'У.',
+                'Выработка',
+                'Рудоспуск',
+                'Вид работ',
+                'Тип оборудования',
+                'Оборудование',
+                'Оператор',
+                'План',
+                'Порядок',
+                'Доп. инф.'))
+
+        #print('-------------------------------------------------------------------' +
+        #     '-------------------------------------------------------------------\n')
+
         for order in self.__workorders:
-            print('{0}\t{1}\t{2}\t{3}\t{4}\n'.format(
-                self.__locations[order.idLocation].idSection,
-                self.__locations[order.idLocation].name,
-                self.__job_kinds[order.idJobKind].name,
-                order.plan,
-                order.order
-            ))
+            orepass_id = order.idOrePass
+            if orepass_id is not None:
+                orepass_str = '({0}) '.format(orepass_id) + self.__orepass[orepass_id].name
+            else:
+                orepass_str = '-'
+
+            if order.order is not None:
+                order_str = order.order
+            else:
+                order_str = '-'
+
+            print('{0:2s} | {1:2s} | {2:40s} | {3:30s} | {4:40s} | {5:20s} | {6:25s} | {7:40s} | {8:5.0f}\t | \t{9:10} | {10}\n'
+                .format(
+                    self.__shafts[self.__sections[self.__locations[order.idLocation].idSection].idShaft].name,
+                    self.__sections[self.__locations[order.idLocation].idSection].name,
+                    ' ({0}) '.format(order.idLocation) + self.__locations[order.idLocation].name,
+                    orepass_str,
+                    self.__job_kinds[order.idJobKind].name,
+                    self.__equipment_types[order.idEquipmentType].name,
+                    ' ({0}) '.format(order.idEquipment) + self.__equipments[order.idEquipment].number,
+                    ' ({0}) '.format(order.idOperator) + self.__operators[order.idOperator].name,
+                    order.plan,
+                    order_str,
+                    str(order.description)))
 
     @staticmethod
     def dict_by_key(key, items):

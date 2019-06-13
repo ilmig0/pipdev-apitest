@@ -41,7 +41,7 @@ class DsgApi:
         return self.__get_item('api/references/equipmentcategory/{0}'
                                .format(date))
 
-    def get_equipment_type(self, date,  equipment_category_id):
+    def get_equipment_type(self, date, equipment_category_id='Null'):
         return self.__get_item('api/references/equipmenttype/{0}/{1}'
                                .format(date, equipment_category_id))
 

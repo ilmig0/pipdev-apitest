@@ -10,8 +10,9 @@ class DynamicObject(object):
 
     @staticmethod
     def create_instance(json):
-        if isinstance(json, dict):
-            return DynamicObject(json)
-        elif isinstance(json, list):
-            return list(DynamicObject.create_instance(x) for x in list(json))
+        if json is not None:
+            if isinstance(json, dict):
+                return DynamicObject(json)
+            elif isinstance(json, list):
+                return list(DynamicObject.create_instance(x) for x in list(json))
         return json
