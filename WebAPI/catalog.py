@@ -1,6 +1,3 @@
-import common
-
-
 class Catalog:
 
     def __init__(self, api, mine, date):
@@ -14,12 +11,15 @@ class Catalog:
         self.__equipments = dict()
         self.__equipment_types = dict()
         self.__orepass = dict()
+        self.__skips = dict()
         self.__operators = dict()
         self.__job_kinds = dict()
         self.__units = dict()
 
         self.__priority = list()
         self.__workorders = list()
+        self.__locomotive_orders = list()
+        self.__skip_orders = list()
 
     @staticmethod
     def get_mines(api, date):
@@ -51,6 +51,10 @@ class Catalog:
         orepass_list = self.__api.get_orepass(self.__date, self.__mine)
         self.__orepass.update(Catalog.dict_by_key('idOrePass', orepass_list))
 
+    def __update_skips(self):
+        skip_list = self.__api.get_skip(self.__date, self.__mine)
+        self.__skips.update(Catalog.dict_by_key('idSkip', skip_list))
+
     def __update_operators(self):
         operators_list = self.__api.get_operator(self.__date, self.__mine)
         self.__operators.update(Catalog.dict_by_key('idOperator', operators_list))
@@ -63,9 +67,15 @@ class Catalog:
         unit_list = self.__api.get_unit(self.__date)
         self.__units.update(Catalog.dict_by_key('idUnit', unit_list))
 
-    def request_workorders(self, date, shift):
+    def request_work_orders(self, date, shift):
         for section in self.__sections.values():
-            self.__workorders = self.__workorders + self.__api.get_workorder(date, self.__mine, section.idShaft, section.idSection, shift)
+            self.__workorders = self.__workorders + self.__api.get_work_order(date, self.__mine, section.idShaft, section.idSection, shift)
+
+    def request_locomotive_order(self, date, shift):
+        self.__locomotive_orders = self.__locomotive_orders + self.__api.get_locomotive_order(date, shift, self.__mine)
+
+    def request_skip_order(self, date, shift):
+        self.__skip_orders = self.__skip_orders + self.__api.get_skip_order(date, shift, self.__mine)
 
     def request_priority(self, date, shift):
         self.__priority = self.__priority + self.__api.get_priority(date, self.__mine, shift)
@@ -80,8 +90,9 @@ class Catalog:
         self.__update_operators()
         self.__update_job_kind()
         self.__update_unit()
+        self.__update_skips()
 
-    def print_workorders(self):
+    def print_work_orders(self):
 
         print('{0:2s} | {1:2s} | {2:40s} | {3:30s} | {4:40s} | {5:20s} | {6:25s} | {7:40s} | {8:5s}\t | \t{9:10s} | {10}\n'
             .format(
@@ -97,8 +108,8 @@ class Catalog:
                 'Порядок',
                 'Доп. инф.'))
 
-        #print('-------------------------------------------------------------------' +
-        #     '-------------------------------------------------------------------\n')
+        # print('-------------------------------------------------------------------' +
+        #       '-------------------------------------------------------------------\n')
 
         for order in self.__workorders:
             orepass_id = order.idOrePass
