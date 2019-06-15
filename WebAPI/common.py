@@ -6,6 +6,10 @@ class DynamicObject(object):
     def __getattr__(self, item):
         if item not in self.__dict__ and item in self.__dict:
             self.__dict__[item] = DynamicObject.create_instance(self.__dict[item])
+
+        if item not in self.__dict__:
+            raise AttributeError
+
         return self.__dict__[item]
 
     @staticmethod

@@ -1,7 +1,17 @@
 {
-  "dsg_server": "http://snr05228:8096",
-  "login": "Integrator",
-  "password": "123",
-  "test_date": "2019-06-13",
-  "test_shift": "2"
+  "dsg": {
+    "server": "http://snr05228:8202",
+    "login": "Integrator",
+    "password": "123",
+    "test_date": "2019-06-13",
+    "test_shift": "2"
+  },
+  "ksip": {
+    "server": "http://snr05228:8202",
+    "login": "Integrator",
+    "password": "123",
+    "test_date": "2019-06-13",
+    "test_shift": "2",
+    "get_fact_method": "api/GetFact"
+  }
 }

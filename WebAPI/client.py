@@ -1,5 +1,5 @@
 import requests
-
+from requests.auth import HTTPDigestAuth
 
 class HttpClient:
 
@@ -8,6 +8,8 @@ class HttpClient:
         self.__session = requests.Session()
         self.__session.headers = headers
         self.__session.proxies = proxies
+        self.__session.auth = None
+        self.__session.verify = False
 
     def get(self, uri):
         return self.__send_request('GET', uri)
@@ -19,6 +21,9 @@ class HttpClient:
         body = 'grant_type=password&username={0}&password={1}'.format(login,password)
         response = self.post(uri, data=body)
         self.__update_header('Authorization', 'Bearer ' + response['access_token'])
+
+    def authorize_basic(self, login, password):
+        self.__session.auth = HTTPDigestAuth(login, password)
 
     def __update_header(self, key, value):
         self.__session.headers[key] = value

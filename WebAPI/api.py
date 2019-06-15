@@ -1,7 +1,6 @@
 from client import HttpClient
 from common import DynamicObject
 
-
 class DsgApi:
 
     def __init__(self, server, login, password):
@@ -83,6 +82,24 @@ class DsgApi:
 
     def get_skip_order(self, date, shift, mine_id):
         return self.__get_items('api/skiporder/{0}/{1}/{2}'.format(date, shift, mine_id))
+
+    def __get_items(self, uri, root='data'):
+        response = self.__client.get(uri)
+        items = getattr(DynamicObject(response), root)
+        if items is None:
+            items = list()
+        return items
+
+
+class KsipApi:
+    def __init__(self, server, login, password):
+        self.__server = server
+        self.__client = HttpClient(server, headers={'Content-type': 'application/json'})
+        self.__client.authorize_basic(login, password)
+
+    def get_fact(self, uri, date, shift, mine, shaft, section):
+        response = self.__get_items('{0}/{1}/{2}/{3}/{4}/{5}'.format(uri, date, shift, mine, shaft, section))
+        return response
 
     def __get_items(self, uri, root='data'):
         response = self.__client.get(uri)
