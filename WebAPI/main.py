@@ -1,21 +1,19 @@
 from api import DsgApi
 from catalog import Catalog
+from common import DynamicObject
+import json
 
-server = 'http://snr05228:8094'
-login = 'Integrator'
-password = '123'
-test_date = '2019-07-07'
-test_shift = 1
+with open("config.json", "r") as config_file:
+    config = DynamicObject(json.loads(config_file.read()))
 
-api = DsgApi(server, login, password)
+api = DsgApi(config.dsg_server, config.login, config.password)
 
-mines = Catalog.get_mines(api, test_date)
+mines = Catalog.get_mines(api, config.test_date)
 
 for mine in mines:
-    catalog = Catalog(api, mine, test_date)
+    catalog = Catalog(api, mine, config.test_date)
     catalog.update_catalogs()
-    catalog.request_priority(test_date, test_shift)
-    catalog.request_work_orders(test_date, test_shift)
-    catalog.request_locomotive_order(test_date, test_shift)
-    catalog.request_skip_order(test_date, test_shift)
-    catalog.print_work_orders()
+    catalog.request_priority(config.test_date, config.test_shift)
+    catalog.request_work_orders(config.test_date, config.test_shift)
+    catalog.request_locomotive_order(config.test_date, config.test_shift)
+    catalog.request_skip_order(config.test_date, config.test_shift)

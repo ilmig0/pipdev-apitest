@@ -17,9 +17,6 @@ class Catalog:
         self.__units = dict()
 
         self.__priority = list()
-        self.__workorders = list()
-        self.__locomotive_orders = list()
-        self.__skip_orders = list()
 
     @staticmethod
     def get_mines(api, date):
@@ -68,14 +65,19 @@ class Catalog:
         self.__units.update(Catalog.dict_by_key('idUnit', unit_list))
 
     def request_work_orders(self, date, shift):
+        work_orders = list()
         for section in self.__sections.values():
-            self.__workorders = self.__workorders + self.__api.get_work_order(date, self.__mine, section.idShaft, section.idSection, shift)
+            work_orders = work_orders + self.__api.get_work_order(date, self.__mine, section.idShaft, section.idSection, shift)
+
+        self.__print_work_orders(work_orders)
 
     def request_locomotive_order(self, date, shift):
-        self.__locomotive_orders = self.__locomotive_orders + self.__api.get_locomotive_order(date, shift, self.__mine)
+        locomotive_orders = self.__api.get_locomotive_order(date, shift, self.__mine)
+        self.__print_locomotive_orders(locomotive_orders)
 
     def request_skip_order(self, date, shift):
-        self.__skip_orders = self.__skip_orders + self.__api.get_skip_order(date, shift, self.__mine)
+        skip_orders = self.__api.get_skip_order(date, shift, self.__mine)
+        self.__print_skip_orders(skip_orders)
 
     def request_priority(self, date, shift):
         self.__priority = self.__priority + self.__api.get_priority(date, self.__mine, shift)
@@ -92,12 +94,46 @@ class Catalog:
         self.__update_unit()
         self.__update_skips()
 
-    def print_work_orders(self):
+    def __print_locomotive_orders(self, locomotive_orders):
+        fs = '{0:20s}  {1:45s}  {2:10s}  {3:10s} \n'
 
-        print('{0:2s} | {1:2s} | {2:40s} | {3:30s} | {4:40s} | {5:20s} | {6:25s} | {7:40s} | {8:5s}\t | \t{9:10s} | {10}\n'
-            .format(
-                'Ш.',
-                'У.',
+        print(fs.format('Электровоз', 'Машинист', 'План', 'Ед. изм'))
+
+        for locomotive_order in locomotive_orders:
+            equipment = Catalog.__get_item_attr(self.__equipments, locomotive_order.idEquipment, 'number')
+
+            operator = Catalog.__get_item_attr(self.__operators, locomotive_order.idOperator, 'name')
+
+            plan = Catalog.__value_to_str(locomotive_order.plan)
+
+            print(fs.format(equipment, operator, plan, 'вагонов'))
+
+        print('\n')
+
+    def __print_skip_orders(self, skip_orders):
+        fs = '{0:20s}  {1:45s}  {2:10s}  {3:10s} \n'
+
+        print(fs.format('Рудоспуск', 'Скиповой ствол', 'План', 'Ед. изм'))
+
+        for skip_order in skip_orders:
+
+            ore_pass = Catalog.__get_item_attr(self.__orepass, skip_order.idSource, 'name')
+
+            skip = Catalog.__get_item_attr(self.__skips, skip_order.idDestination, 'name')
+
+            plan = Catalog.__value_to_str(skip_order.plan)
+
+            print(fs.format(ore_pass, skip, plan, 'вагонов'))
+
+        print('\n')
+
+    def __print_work_orders(self, work_orders):
+
+        fs = '{0:2s}  {1:2s}  {2:45s}  {3:30s}  {4:35s}  {5:25s}  {6:25s}  {7:40s}  {8:5s}  {9:10s}  {10:7s}  {11}\n'
+
+        print(fs.format(
+                'Ш',
+                'У',
                 'Выработка',
                 'Рудоспуск',
                 'Вид работ',
@@ -105,37 +141,76 @@ class Catalog:
                 'Оборудование',
                 'Оператор',
                 'План',
+                'Ед. изм',
                 'Порядок',
                 'Доп. инф.'))
 
         # print('-------------------------------------------------------------------' +
         #       '-------------------------------------------------------------------\n')
 
-        for order in self.__workorders:
-            orepass_id = order.idOrePass
-            if orepass_id is not None:
-                orepass_str = '({0}) '.format(orepass_id) + self.__orepass[orepass_id].name
-            else:
-                orepass_str = '-'
+        for work_order in work_orders:
+            location_model = self.__locations[work_order.idLocation]
+            location = Catalog.__get_item_attr(self.__locations, location_model.idLocation, 'name')
 
-            if order.order is not None:
-                order_str = order.order
-            else:
-                order_str = '-'
+            ore_pass = Catalog.__get_item_attr(self.__orepass, work_order.idOrePass, 'name')
 
-            print('{0:2s} | {1:2s} | {2:40s} | {3:30s} | {4:40s} | {5:20s} | {6:25s} | {7:40s} | {8:5.0f}\t | \t{9:10} | {10}\n'
-                .format(
-                    self.__shafts[self.__sections[self.__locations[order.idLocation].idSection].idShaft].name,
-                    self.__sections[self.__locations[order.idLocation].idSection].name,
-                    ' ({0}) '.format(order.idLocation) + self.__locations[order.idLocation].name,
-                    orepass_str,
-                    self.__job_kinds[order.idJobKind].name,
-                    self.__equipment_types[order.idEquipmentType].name,
-                    ' ({0}) '.format(order.idEquipment) + self.__equipments[order.idEquipment].number,
-                    ' ({0}) '.format(order.idOperator) + self.__operators[order.idOperator].name,
-                    order.plan,
-                    order_str,
-                    str(order.description)))
+            section_model = self.__sections[location_model.idSection]
+            section = Catalog.__get_item_attr(self.__sections, section_model.idSection, 'name', print_id=False)
+
+            shaft = Catalog.__get_item_attr(self.__shafts, section_model.idShaft, 'name', print_id=False)
+
+            job_kind = Catalog.__get_item_attr(self.__job_kinds, work_order.idJobKind, 'name')
+
+            equipment_type = Catalog.__get_item_attr(self.__equipment_types, work_order.idEquipmentType, 'name')
+
+            equipment = Catalog.__get_item_attr(self.__equipments, work_order.idEquipment, 'number')
+
+            operator = Catalog.__get_item_attr(self.__operators, work_order.idOperator, 'name')
+
+            plan = Catalog.__value_to_str(work_order.plan)
+
+            unit = Catalog.__get_item_attr(self.__units, work_order.idUnit, 'name', print_id=False)
+
+            order = Catalog.__value_to_str(work_order.order)
+
+            description = Catalog.__value_to_str(work_order.description)
+
+            print(fs.format(
+                        shaft,
+                        section,
+                        location,
+                        ore_pass,
+                        job_kind,
+                        equipment_type,
+                        equipment,
+                        operator,
+                        plan,
+                        unit,
+                        order,
+                        description))
+
+        print('\n')
+
+    @staticmethod
+    def __get_item_attr(items, item_id, attr, print_id=True):
+        if item_id is not None:
+            if print_id:
+                item_str = '({0}) '.format(str(item_id)) + getattr(items[item_id], attr)
+            else:
+                item_str = getattr(items[item_id], attr)
+        else:
+            item_str = '-'
+
+        return item_str
+
+    @staticmethod
+    def __value_to_str(value):
+        if value is not None:
+            value_str = str(value)
+        else:
+            value_str = '-'
+
+        return value_str
 
     @staticmethod
     def dict_by_key(key, items):
