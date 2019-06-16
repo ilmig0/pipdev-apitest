@@ -1,6 +1,7 @@
 from client import HttpClient
 from common import DynamicObject
 
+
 class DsgApi:
 
     def __init__(self, server, login, password):
@@ -96,6 +97,10 @@ class KsipApi:
         self.__server = server
         self.__client = HttpClient(server, headers={'Content-type': 'application/json'})
         self.__client.authorize_basic(login, password)
+
+    def get_fact(self, uri, date, shift, mine, shaft, section):
+        response = self.__get_items('{0}/{1}/{2}/{3}/{4}/{5}'.format(uri, date, shift, mine, shaft, section))
+        return response
 
     def get_fact(self, uri, date, shift, mine, shaft, section):
         response = self.__get_items('{0}/{1}/{2}/{3}/{4}/{5}'.format(uri, date, shift, mine, shaft, section))

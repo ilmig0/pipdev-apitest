@@ -1,6 +1,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
 
+
 class HttpClient:
 
     def __init__(self, server, headers=None, proxies=None):
@@ -18,13 +19,12 @@ class HttpClient:
         return self.__send_request('GET', uri, data=data, json=json)
 
     def authorize_bearer(self, uri, login, password):
-        body = 'grant_type=password&username={0}&password={1}'.format(login,password)
+        body = 'grant_type=password&username={0}&password={1}'.format(login, password)
         response = self.post(uri, data=body)
         self.__update_header('Authorization', 'Bearer ' + response['access_token'])
 
     def authorize_basic(self, login, password):
         self.__session.auth = HTTPBasicAuth(login, password)
-        pass
 
     def __update_header(self, key, value):
         self.__session.headers[key] = value
@@ -34,8 +34,6 @@ class HttpClient:
         response = self.__session.request(method, url=server_uri, data=data, json=json)
 
         if response.status_code > 300:
-            raise Exception('An error occured: {0}'.format(response.content))
+            raise Exception('An error occurred: {0}'.format(response.content))
 
         return response.json()
-
-

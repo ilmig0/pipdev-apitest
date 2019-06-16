@@ -1,17 +1,45 @@
 {
-  "dsg": {
-    "server": "http://snr05228:8094",
-    "login": "Integrator",
-    "password": "123",
-    "test_date": "2019-06-11",
-    "test_shift": "1"
+  "cases": {
+    "work_order_request": true,
+    "locomotive_order_request": true,
+    "skip_order_request": true,
+    "sdo_fact_request": true,
+    "vgu_fact_request": true
   },
-  "ksip": {
-    "server": "http://snr05228:51100",
-    "login": "dsg_test",
-    "password": "PiPd_123!",
-    "test_date": "2019-06-11",
-    "test_shift": "1",
-    "get_fact_method": "RESTAdapter/GetASUGRFact"
+  "test_settings": {
+    "work_order": {
+      "date": "2019-06-13",
+      "shift": "3"
+    },
+    "locomotive_order": {
+      "date": "2019-06-13",
+      "shift": "3"
+    },
+    "skip_order": {
+      "date": "2019-06-13",
+      "shift": "3"
+    },
+    "sdo_fact": {
+      "date": "2019-06-11",
+      "shift": "1"
+    },
+    "vgu_fact": {
+      "date": "2019-06-11",
+      "shift": "1"
+    }
+  },
+  "api": {
+    "dsg": {
+      "server": "http://snr05228:8096",
+      "login": "Integrator",
+      "password": "123"
+    },
+    "ksip": {
+      "server": "http://snr05228:51100",
+      "login": "dsg_test",
+      "password": "PiPd_123!",
+      "fact_method": "RESTAdapter/GetASUGRFact",
+      "skip_fact_method": "RESTAdapter/GetASUGRGrades"
+    }
   }
 }
