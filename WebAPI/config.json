@@ -1,17 +1,17 @@
 {
   "dsg": {
-    "server": "http://snr05228:8202",
+    "server": "http://snr05228:8094",
     "login": "Integrator",
     "password": "123",
-    "test_date": "2019-06-13",
-    "test_shift": "2"
+    "test_date": "2019-06-11",
+    "test_shift": "1"
   },
   "ksip": {
-    "server": "http://snr05228:8202",
-    "login": "Integrator",
-    "password": "123",
-    "test_date": "2019-06-13",
-    "test_shift": "2",
-    "get_fact_method": "api/GetFact"
+    "server": "http://snr05228:51100",
+    "login": "dsg_test",
+    "password": "PiPd_123!",
+    "test_date": "2019-06-11",
+    "test_shift": "1",
+    "get_fact_method": "RESTAdapter/GetASUGRFact"
   }
 }

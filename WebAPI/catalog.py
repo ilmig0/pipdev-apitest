@@ -103,7 +103,7 @@ class Catalog:
         self.__update_skips()
 
     def __print_facts(self, facts):
-        fs = '{0:5s}  {1:5s}  {2:45s}  {3:35s}  {4:35s} {5:25s} {6:25s}  {7}\n'
+        fs = '{0:5s}  {1:5s}  {2:45s}  {3:35s}  {4:45s} {5:25s} {6:25s}  {7}\n'
 
         print(fs.format(
             'Ш',
@@ -245,7 +245,7 @@ class Catalog:
 
     @staticmethod
     def __item_attr_to_str(items, item_id, attr, print_id=True):
-        if item_id is not None:
+        if item_id is not None and item_id in items:
             if print_id:
                 item_str = '({0}) '.format(str(item_id)) + getattr(items[item_id], attr)
             else:

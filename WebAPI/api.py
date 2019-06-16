@@ -103,7 +103,7 @@ class KsipApi:
 
     def __get_items(self, uri, root='data'):
         response = self.__client.get(uri)
-        items = getattr(DynamicObject(response), root)
+        items = getattr(DynamicObject(response), root, list())
         if items is None:
             items = list()
         return items

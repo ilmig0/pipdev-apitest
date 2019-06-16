@@ -1,5 +1,5 @@
 import requests
-from requests.auth import HTTPDigestAuth
+from requests.auth import HTTPBasicAuth
 
 class HttpClient:
 
@@ -23,7 +23,8 @@ class HttpClient:
         self.__update_header('Authorization', 'Bearer ' + response['access_token'])
 
     def authorize_basic(self, login, password):
-        self.__session.auth = HTTPDigestAuth(login, password)
+        self.__session.auth = HTTPBasicAuth(login, password)
+        pass
 
     def __update_header(self, key, value):
         self.__session.headers[key] = value
