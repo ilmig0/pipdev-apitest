@@ -1,12 +1,12 @@
 from api import DsgApi, KsipApi
 from catalog import Catalog
-from common import DynamicObject
+from common import Dynamic
 import json
 
 
 def main():
     with open("config.json", "r") as config_file:
-        config = DynamicObject(json.loads(config_file.read()))
+        config = Dynamic(json.loads(config_file.read()))
 
     dsg = config.api.dsg
     ksip = config.api.ksip

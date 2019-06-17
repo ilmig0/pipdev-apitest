@@ -1,4 +1,4 @@
-from common import DynamicObject
+from common import Dynamic
 
 
 class Catalog:
@@ -133,7 +133,7 @@ class Catalog:
 
             job_kind = Catalog.__item_attr_to_str(self.__job_kinds, fact.idJobKind, 'name')
 
-            equipment_model = self.__equipments.get(fact.idEquipment,  DynamicObject(dict()))
+            equipment_model = self.__equipments.get(fact.idEquipment, Dynamic(dict()))
             equipment = Catalog.__item_attr_to_str(self.__equipments, fact.idEquipment, 'number')
 
             equipment_type = Catalog.__item_attr_to_str(self.__equipment_types,

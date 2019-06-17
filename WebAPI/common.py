@@ -1,22 +1,20 @@
-class DynamicObject(object):
-    def __init__(self, json):
-        self.__dict = dict()
-        self.__dict.update(json)
+class Dynamic(object):
+    def __init__(self, json: dict):
+        self.__json = json
 
     def __getattr__(self, item):
-        if item not in self.__dict__ and item in self.__dict:
-            self.__dict__[item] = DynamicObject.create_instance(self.__dict[item])
-
-        if item not in self.__dict__:
+        if (item not in self.__dict__) and (item in self.__json):
+            self.__dict__[item] = Dynamic.__instance(self.__json[item])
+        else:
             raise AttributeError
 
         return self.__dict__[item]
 
     @staticmethod
-    def create_instance(json):
-        if json is not None:
-            if isinstance(json, dict):
-                return DynamicObject(json)
-            elif isinstance(json, list):
-                return list(DynamicObject.create_instance(x) for x in list(json))
-        return json
+    def __instance(node):
+        if node is not None:
+            if isinstance(node, dict):
+                return Dynamic(node)
+            elif isinstance(node, list):
+                return list(Dynamic.__instance(x) for x in list(node))
+        return node

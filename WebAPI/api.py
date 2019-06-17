@@ -1,5 +1,5 @@
 from client import HttpClient
-from common import DynamicObject
+from common import Dynamic
 
 
 class DsgApi:
@@ -86,7 +86,7 @@ class DsgApi:
 
     def __get_items(self, uri, root='data'):
         response = self.__client.get(uri)
-        items = getattr(DynamicObject(response), root)
+        items = getattr(Dynamic(response), root)
         if items is None:
             items = list()
         return items
@@ -108,7 +108,7 @@ class KsipApi:
 
     def __get_items(self, uri, root='data'):
         response = self.__client.get(uri)
-        items = getattr(DynamicObject(response), root, list())
+        items = getattr(Dynamic(response), root, list())
         if items is None:
             items = list()
         return items
