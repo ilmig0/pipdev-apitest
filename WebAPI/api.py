@@ -98,12 +98,15 @@ class KsipApi:
         self.__client = HttpClient(server, headers={'Content-type': 'application/json'})
         self.__client.authorize_basic(login, password)
 
-    def get_fact(self, uri, date, shift, mine, shaft, section):
-        response = self.__get_items('{0}/{1}/{2}/{3}/{4}/{5}'.format(uri, date, shift, mine, shaft, section))
+    def get_sdo_fact(self, uri, date, shift, mine, shaft, section):
+        return self.__get_items('{0}/{1}/{2}/{3}/{4}/{5}'.format(uri, date, shift, mine, shaft, section))
+
+    def get_skip_fact(self, uri, date, shift, mine):
+        response = self.__get_items('{0}/{1}/{2}/{3}'.format(uri, date, shift, mine), root='facts')
         return response
 
-    def get_fact(self, uri, date, shift, mine, shaft, section):
-        response = self.__get_items('{0}/{1}/{2}/{3}/{4}/{5}'.format(uri, date, shift, mine, shaft, section))
+    def get_ore_pass_fact(self, uri, date, shift, mine):
+        response = self.__get_items('{0}/{1}/{2}/{3}'.format(uri, date, shift, mine), root='facts')
         return response
 
     def __get_items(self, uri, root='data'):

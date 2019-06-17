@@ -3,7 +3,7 @@ class Dynamic(object):
         self.__json = json
 
     def __getattr__(self, item):
-        if (item not in self.__dict__) and (item in self.__json):
+        if item in self.__json:
             self.__dict__[item] = Dynamic.__instance(self.__json[item])
         else:
             raise AttributeError

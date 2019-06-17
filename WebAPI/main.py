@@ -14,13 +14,13 @@ def main():
     settings = config.test_settings
 
     dsg_api = DsgApi(dsg.server, dsg.login, dsg.password)
-    ksip_api = KsipApi(ksip.server, ksip.login, ksip.password)
+    ksip_api = KsipApi(ksip.proxy, ksip.login, ksip.password)
 
     mines = Catalog.get_mines(dsg_api, settings.work_order.date)
 
     for mine in mines:
         catalog = Catalog(dsg_api, ksip_api, mine)
-        catalog.update_catalogs(settings.work_order.date)
+        catalog.update_catalogs(settings.catalog.date)
 
         if cases.work_order_request:
             catalog.request_work_orders(
@@ -39,15 +39,21 @@ def main():
 
         if cases.sdo_fact_request:
             catalog.request_sdo_fact(
-                ksip.fact_method,
+                ksip.fact_method.sdo,
                 settings.sdo_fact.date,
                 settings.sdo_fact.shift)
 
-        if cases.vgu_fact_request:
-            catalog.request_vgu_fact(
-                ksip.fact_method,
-                settings.vgu_fact.date,
-                settings.vgu_fact.shift)
+        if cases.skip_fact_request:
+            catalog.request_skip_fact(
+                ksip.fact_method.skip,
+                settings.skip_fact.date,
+                settings.skip_fact.shift)
+
+        if cases.ore_pass_fact_request:
+            catalog.request_ore_pass_fact(
+                ksip.fact_method.ore_pass,
+                settings.ore_pass_fact.date,
+                settings.ore_pass_fact.shift)
 
 
 def test():

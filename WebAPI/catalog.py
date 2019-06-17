@@ -89,11 +89,16 @@ class Catalog:
     def request_sdo_fact(self, fact_method, date, shift):
         facts = list()
         for section in self.__sections.values():
-            facts = facts + self.__ksip_api.get_fact(fact_method, date, shift, self.__mine, section.idShaft, section.idSection)
+            facts = facts + self.__ksip_api.get_sdo_fact(fact_method, date, shift, self.__mine, section.idShaft, section.idSection)
         self.__print_facts(facts)
 
-    def request_vgu_fact(self, fact_method, date, shift):
-        print('Тут будет метод, который будет запрашивать факт ВШТ и печатать его в приглядном человеку виде:)')
+    def request_skip_fact(self, fact_method, date, shift):
+        facts = self.__ksip_api.get_skip_fact(fact_method, date, shift, self.__mine)
+        self.__print_skip_facts(facts)
+
+    def request_ore_pass_fact(self, fact_method, date, shift):
+        facts = self.__ksip_api.get_ore_pass_fact(fact_method, date, shift, self.__mine)
+        self.__print_ore_pass_facts(facts)
 
     def update_catalogs(self, date):
         self.__update_shafts(date)
@@ -187,6 +192,48 @@ class Catalog:
 
         print('\n')
 
+    def __print_skip_facts(self, skip_facts):
+        fs = '{0:50s}  {1:50s}  {2:50s}  {3:50s} {4:50s}\n'
+
+        print(fs.format('Скиповой ствол', 'Отгружено тонн', 'Отгружено вагонов',  'Ni, %', 'Cu, %'))
+
+        for skip_fact in skip_facts:
+
+            skip = Catalog.__item_attr_to_str(self.__skips, skip_fact.idNode, 'name')
+
+            carriage = Catalog.__value_to_str(skip_fact.carriage)
+
+            tonnes = Catalog.__value_to_str(skip_fact.tons)
+
+            grade_ni = Catalog.__value_to_str(skip_fact.grade_Ni)
+
+            grade_cu = Catalog.__value_to_str(skip_fact.grade_Cu)
+
+            print(fs.format(skip, tonnes, carriage, grade_ni, grade_cu))
+
+        print('\n')
+
+    def __print_ore_pass_facts(self, ore_pass_facts):
+        fs = '{0:50s}  {1:50s}  {2:50s}  {3:50s} {4:50s}\n'
+
+        print(fs.format('Рудоспуск', 'Отгружено тонн', 'Отгружено вагонов',  'Ni, %', 'Cu, %'))
+
+        for ore_pass_fact in ore_pass_facts:
+
+            skip = Catalog.__item_attr_to_str(self.__ore_pass, ore_pass_fact.idNode, 'name')
+
+            carriage = Catalog.__value_to_str(ore_pass_fact.carriage)
+
+            tonnes = Catalog.__value_to_str(ore_pass_fact.tons)
+
+            grade_ni = Catalog.__value_to_str(ore_pass_fact.grade_Ni)
+
+            grade_cu = Catalog.__value_to_str(ore_pass_fact.grade_Cu)
+
+            print(fs.format(skip, tonnes, carriage, grade_ni, grade_cu))
+
+        print('\n')
+
     def __print_work_orders(self, work_orders):
 
         fs = '{0:5s}  {1:5s}  {2:45s}  {3:30s}  {4:40s}  {5:25s}  {6:25s}  {7:40s}  {8:5s}  {9:10s}  {10:7s}  {11}\n'
@@ -250,11 +297,14 @@ class Catalog:
 
     @staticmethod
     def __item_attr_to_str(items, item_id, attr, print_id=True):
-        if item_id is not None and item_id in items:
-            if print_id:
-                item_str = '({0}) '.format(str(item_id)) + getattr(items[item_id], attr)
+        if item_id is not None:
+            if item_id in items:
+                if print_id:
+                    item_str = '({0}) '.format(str(item_id)) + getattr(items[item_id], attr)
+                else:
+                    item_str = getattr(items[item_id], attr)
             else:
-                item_str = getattr(items[item_id], attr)
+                item_str = '({0})'.format(str(item_id))
         else:
             item_str = '-'
 

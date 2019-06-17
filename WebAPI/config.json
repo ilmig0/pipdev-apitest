@@ -1,14 +1,18 @@
 {
   "cases": {
-    "work_order_request": true,
-    "locomotive_order_request": true,
-    "skip_order_request": true,
+    "work_order_request": false,
+    "locomotive_order_request": false,
+    "skip_order_request": false,
     "sdo_fact_request": true,
-    "vgu_fact_request": true
+    "skip_fact_request": false,
+    "ore_pass_fact_request": false
   },
   "test_settings": {
+    "catalog": {
+      "date": "2019-06-15"
+    },
     "work_order": {
-      "date": "2019-06-13",
+      "date": "2019-06-15",
       "shift": "3"
     },
     "locomotive_order": {
@@ -23,23 +27,31 @@
       "date": "2019-06-11",
       "shift": "1"
     },
-    "vgu_fact": {
+    "skip_fact": {
+      "date": "2019-06-11",
+      "shift": "1"
+    },
+    "ore_pass_fact": {
       "date": "2019-06-11",
       "shift": "1"
     }
   },
   "api": {
     "dsg": {
-      "server": "http://snr05228:8096",
+      "server": "http://snr05228:8094",
       "login": "Integrator",
       "password": "123"
     },
     "ksip": {
-      "server": "http://snr05228:51100",
+      "server": "http://wnr80147:8090",
+      "proxy": "http://snr05228:51100",
       "login": "dsg_test",
       "password": "PiPd_123!",
-      "fact_method": "RESTAdapter/GetASUGRFact",
-      "skip_fact_method": "RESTAdapter/GetASUGRGrades"
+      "fact_method":{
+        "sdo": "RESTAdapter/GetASUGRFact",
+        "skip": "api/SkipFact",
+        "ore_pass": "api/OrePass"
+      }
     }
   }
 }
