@@ -3,32 +3,32 @@
     "work_order_request": false,
     "locomotive_order_request": false,
     "skip_order_request": false,
-    "sdo_fact_request": true,
+    "sdo_fact_request": false,
     "skip_fact_request": false,
-    "ore_pass_fact_request": false
+    "ore_pass_fact_request": true
   },
   "test_settings": {
     "catalog": {
-      "date": "2019-06-15"
+      "date": "2019-06-11"
     },
     "work_order": {
-      "date": "2019-06-15",
-      "shift": "3"
+      "date": "2019-06-11",
+      "shift": "2"
     },
     "locomotive_order": {
       "date": "2019-06-13",
       "shift": "3"
     },
     "skip_order": {
-      "date": "2019-06-13",
-      "shift": "3"
+      "date": "2019-06-01",
+      "shift": "1"
     },
     "sdo_fact": {
       "date": "2019-06-11",
       "shift": "1"
     },
     "skip_fact": {
-      "date": "2019-06-11",
+      "date": "2019-06-16",
       "shift": "1"
     },
     "ore_pass_fact": {
@@ -38,7 +38,7 @@
   },
   "api": {
     "dsg": {
-      "server": "http://snr05228:8094",
+      "server": "http://snr05228:8096",
       "login": "Integrator",
       "password": "123"
     },
@@ -49,8 +49,8 @@
       "password": "PiPd_123!",
       "fact_method":{
         "sdo": "RESTAdapter/GetASUGRFact",
-        "skip": "api/SkipFact",
-        "ore_pass": "api/OrePass"
+        "skip": "RESTAdapter/SkipFact",
+        "ore_pass": "RESTAdapter/OrePass"
       }
     }
   }

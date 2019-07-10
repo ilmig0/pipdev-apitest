@@ -18,6 +18,8 @@ class Catalog:
         self.__operators = dict()
         self.__job_kinds = dict()
         self.__units = dict()
+        self.__materials = dict()
+        self.__material_kinds = dict()
 
         self.__priority = list()
 
@@ -67,6 +69,14 @@ class Catalog:
         unit_list = self.__dsg_api.get_unit(date)
         self.__units.update(Catalog.dict_by_key('idUnit', unit_list))
 
+    def __update_material(self, date):
+        material_list = self.__dsg_api.get_material(date)
+        self.__materials.update(Catalog.dict_by_key('idMaterial', material_list))
+
+    def __update_material_kind(self, date):
+        material_kind_list = self.__dsg_api.get_material_kind(date)
+        self.__material_kinds.update(Catalog.dict_by_key('idMaterialKind', material_kind_list))
+
     def __request_priority(self, date, shift):
         self.__priority = self.__priority + self.__dsg_api.get_priority(date, self.__mine, shift)
 
@@ -110,6 +120,7 @@ class Catalog:
         self.__update_operators(date)
         self.__update_job_kind(date)
         self.__update_unit(date)
+        self.__update_material(date)
         self.__update_skips(date)
 
     def __print_facts(self, facts):
@@ -236,12 +247,13 @@ class Catalog:
 
     def __print_work_orders(self, work_orders):
 
-        fs = '{0:5s}  {1:5s}  {2:45s}  {3:30s}  {4:40s}  {5:25s}  {6:25s}  {7:40s}  {8:5s}  {9:10s}  {10:7s}  {11}\n'
+        fs = '{0:5s}  {1:5s}  {2:45s}  {3:30s} {4:30s}  {5:40s}  {6:25s}  {7:25s}  {8:40s}  {9:5s}  {10:10s}  {11:7s}  {12}\n'
 
         print(fs.format(
                 'Ш',
                 'У',
                 'Выработка',
+                'Материал',
                 'Рудоспуск',
                 'Вид работ',
                 'Тип оборудования',
@@ -254,8 +266,9 @@ class Catalog:
 
         for work_order in work_orders:
             location_model = self.__locations[work_order.idLocation]
-            location = Catalog.__item_attr_to_str(self.__locations, location_model.idLocation, 'name')
 
+            location = Catalog.__item_attr_to_str(self.__locations, location_model.idLocation, 'name')
+            material = Catalog.__item_attr_to_str(self.__materials, location_model.idMaterial, 'name')
             ore_pass = Catalog.__item_attr_to_str(self.__ore_pass, work_order.idOrePass, 'name')
 
             section_model = self.__sections[location_model.idSection]
@@ -283,6 +296,7 @@ class Catalog:
                         shaft,
                         section,
                         location,
+                        material,
                         ore_pass,
                         job_kind,
                         equipment_type,

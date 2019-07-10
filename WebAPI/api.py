@@ -57,6 +57,14 @@ class DsgApi:
         return self.__get_items('api/references/operator/{0}/{1}'
                                 .format(date, mine_id))
 
+    def get_material(self, date, material_kind='Null'):
+        return self.__get_items('api/references/material/{0}/{1}'
+                                .format(date, material_kind))
+
+    def get_material_kind(self, date):
+        return self.__get_items('api/references/materialkind'
+                                .format(date))
+
     def get_job_kind(self, date, mine_id, job_category_id='Null'):
         return self.__get_items('api/references/jobkind/{0}/{1}/{2}'
                                 .format(date, mine_id, job_category_id))
